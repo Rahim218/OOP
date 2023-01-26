@@ -23,6 +23,7 @@ namespace WorkAtHome
             do
             {
                 Console.WriteLine("1.Butun telebelere bax \n2.Telebeler uzre axtaris et \n3.Telebe elave et \n0.Menudan cixis et");
+                Console.WriteLine("Emeliyat secin : ");
                 option = Console.ReadLine();
                 switch (option)
                 {
@@ -38,7 +39,7 @@ namespace WorkAtHome
                                 Console.WriteLine($"FullName : {students[i].FullName}\nGroupNo : {students[i].GroupNo}");
                             }
                         }
-                                                    
+
                         break;
                     case "2":
                         Console.WriteLine("Axtarmaq istediyiniz deyeri daxil edin :");
@@ -49,36 +50,40 @@ namespace WorkAtHome
                         }
                         else
                         {
+                            int count = 0;
                             for (int i = 0; i < students.Length; i++)
                             {
                                 if (students[i].FullName.Contains(getValue) || students[i].GroupNo.Contains(getValue))
                                 {
                                     Console.WriteLine($"FullName : {students[i].FullName} \nGroupNo : {students[i].GroupNo}");
+                                    count++;
                                 }
-                                else
-                                {
-                                    Console.WriteLine("Daxil etdiyiniz deyerle elaqeli melumat yoxdur");
-                                    break;
-                                }
+
+                            }
+                            if (count == 0)
+                            {
+
+                                Console.WriteLine("Daxil etdiyiniz deyerle elaqeli melumat yoxdur");
+
                             }
                         }
-                       
+
                         break;
                     case "3":
                         string fullName;
-                        bool isOk = true; 
+                        bool isOk = true;
                         do
                         {
-                            if (isOk==false)
+                            if (isOk == false)
                             {
-                                  Console.WriteLine("Zehmet olmasa adinizin ve soyadinizin bas herflerini boyuk yazin");
-                                
+                                Console.WriteLine("Zehmet olmasa adinizin ve soyadinizin bas herflerini boyuk yazin");
+
                             }
                             Console.Write("Telebenin ad ve soyadini daxil edin : ");
-                             fullName = Console.ReadLine();
+                            fullName = Console.ReadLine();
                             isOk = false;
 
-                        } while (MakeCorrectFullName(fullName)==false);
+                        } while (MakeCorrectFullName(fullName) == false);
                         bool isOk2 = true;
                         string groupNo;
                         do
@@ -89,8 +94,8 @@ namespace WorkAtHome
                             }
                             Console.Write("Telebenin qrup nomresini daxil edin : ");
                             groupNo = Console.ReadLine();
-                            isOk2=false;
-                        } while (MakeCorrectGroupName(groupNo)==false);
+                            isOk2 = false;
+                        } while (MakeCorrectGroupName(groupNo) == false);
 
                         Student student = new Student()
                         {
@@ -101,8 +106,8 @@ namespace WorkAtHome
                         Array.Resize(ref students, students.Length + 1);
                         for (int i = 0; i < students.Length; i++)
                         {
-                            
-                            students[students.Length-1] = student;
+
+                            students[students.Length - 1] = student;
                         }
                         break;
 
@@ -113,17 +118,21 @@ namespace WorkAtHome
                         option = exitOrContinue;
                         break;
 
-                        default:
+                    default:
                         Console.WriteLine("Zehmet olmasa duzgun secim edin");
                         break;
 
                 }
 
-            } while (option!= "Beli");
+            } while (option != "Beli");
             #endregion
         }
         static bool MakeCorrectGroupName(string str)
         {
+            if (string.IsNullOrWhiteSpace(str))
+            {
+                return false;
+            }
             if (str.Length < 5)
             {
                 if (!char.IsUpper(str[0]))
@@ -147,33 +156,50 @@ namespace WorkAtHome
 
         static bool MakeCorrectFullName(string str)
         {
-            var nameAndSurname = str.Split(' ');
-            var noSpaceNameAndSurname = new string[0];
-            int j = 0;
-            for (int i = 0; i < nameAndSurname.Length; i++)
+            if (string.IsNullOrWhiteSpace(str))
             {
-                if (nameAndSurname[i] != "")
-                {
-                    Array.Resize(ref noSpaceNameAndSurname, noSpaceNameAndSurname.Length+1);
-                    noSpaceNameAndSurname[j] = nameAndSurname[i];
-                    j++;
-                }
+                return false;
             }
-            // FullName 3 addanda ibaret ola biler deye bele verdim
-            if (noSpaceNameAndSurname.Length <= 3)
+            else
             {
-
-                if (MakeName(noSpaceNameAndSurname[0]) && MakeName(noSpaceNameAndSurname[1]) && MakeName(noSpaceNameAndSurname[2]))
+                var nameAndSurname = str.Split(' ');
+                var noSpaceNameAndSurname = new string[0];
+                int j = 0;
+                for (int i = 0; i < nameAndSurname.Length; i++)
                 {
-                    return true;
+                    if (nameAndSurname[i] != "")
+                    {
+                        Array.Resize(ref noSpaceNameAndSurname, noSpaceNameAndSurname.Length + 1);
+                        noSpaceNameAndSurname[j] = nameAndSurname[i];
+                        j++;
+                    }
+                }
+                // FullName 3 addanda ibaret ola biler deye bele verdim
+                if (noSpaceNameAndSurname.Length <= 3)
+                {
+                    int count = 0;
+                    for (int i = 0; i < noSpaceNameAndSurname.Length; i++)
+                    {
+                        if (MakeName(noSpaceNameAndSurname[i]))
+                        {
+                            count++;
+                        }
+                    }
+                    if (noSpaceNameAndSurname.Length == count)
+                    {
+                        return true;
+                    }
+
+
+                    return false;
+
                 }
                 return false;
-
             }
-            return false;
+
 
         }
-        
+
         static bool MakeName(string str)
         {
             if (!char.IsUpper(str[0]))
